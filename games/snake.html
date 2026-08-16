@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>贪吃蛇 | zaizaifadacai</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: white;
+      text-align: center;
+      padding: 30px 15px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .game-box {
+      max-width: 520px;
+      margin: auto;
+      background: #1f2937;
+      padding: 25px;
+      border-radius: 20px;
+    }
+
+    canvas {
+      background: #0b1220;
+      border: 3px solid #60a5fa;
+      border-radius: 12px;
+      max-width: 100%;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+      font-size: 18px;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    .direction-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 25px;
+      color: #93c5fd;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="game-box">
+
+    <h1>🐍 贪吃蛇</h1>
+
+    <p>电脑可以用方向键，手机可以用下面按钮控制。</p>
+
+    <div class="info">
+      <span>分数：<b id="score">0</b></span>
+      <span>最高分：<b id="best">0</b></span>
+    </div>
+
+    <canvas id="game" width="400" height="400"></canvas>
+
+    <br>
+
+    <button onclick="startGame()">开始 / 重新开始</button>
+
+    <div class="controls">
+
+      <div class="direction-row">
+        <button onclick="changeDirection('up')">⬆️</button>
+      </div>
+
+      <div class="direction-row">
+        <button onclick="changeDirection('left')">⬅️</button>
+        <button onclick="changeDirection('down')">⬇️</button>
+        <button onclick="changeDirection('right')">➡️</button>
+      </div>
+
+    </div>
+
+    <a class="back" href="../index.html">
+      ← 返回主页
+    </a>
+
+  </div>
+
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+
+  const grid = 20;
+  const tileCount = canvas.width / grid;
+
+  let snake;
+  let food;
+  let dx;
+  let dy;
+  let score;
+  let timer;
+
+  let best = Number(localStorage.getItem("snakeBest")) || 0;
+  document.getElementById("best").textContent = best;
+
+  function startGame() {
+    clearInterval(timer);
+
+    snake = [
+      { x: 10, y: 10 },
+      { x: 9, y: 10 },
+      { x: 8, y: 10 }
+    ];
+
+    dx = 1;
+    dy = 0;
+    score = 0;
+
+    document.getElementById("score").textContent = score;
+
+    createFood();
+
+    timer = setInterval(gameLoop, 120);
+  }
+
+  function createFood() {
+    food = {
+      x: Math.floor(Math.random() * tileCount),
+      y: Math.floor(Math.random() * tileCount)
+    };
+
+    for (const part of snake) {
+      if (part.x === food.x && part.y === food.y) {
+        createFood();
+        return;
+      }
+    }
+  }
+
+  function gameLoop() {
+    const head = {
+      x: snake[0].x + dx,
+      y: snake[0].y + dy
+    };
+
+    if (
+      head.x < 0 ||
+      head.y < 0 ||
+      head.x >= tileCount ||
+      head.y >= tileCount
+    ) {
+      endGame();
+      return;
+    }
+
+    for (const part of snake) {
+      if (head.x === part.x && head.y === part.y) {
+        endGame();
+        return;
+      }
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+      score++;
+      document.getElementById("score").textContent = score;
+      createFood();
+    } else {
+      snake.pop();
+    }
+
+    draw();
+  }
+
+  function draw() {
+    ctx.fillStyle = "#0b1220";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#ef4444";
+    ctx.fillRect(
+      food.x * grid,
+      food.y * grid,
+      grid - 2,
+      grid - 2
+    );
+
+    ctx.fillStyle = "#22c55e";
+
+    snake.forEach((part, index) => {
+      if (index === 0) {
+        ctx.fillStyle = "#86efac";
+      } else {
+        ctx.fillStyle = "#22c55e";
+      }
+
+      ctx.fillRect(
+        part.x * grid,
+        part.y * grid,
+        grid - 2,
+        grid - 2
+      );
+    });
+  }
+
+  function changeDirection(direction) {
+    if (direction === "up" && dy !== 1) {
+      dx = 0;
+      dy = -1;
+    }
+
+    if (direction === "down" && dy !== -1) {
+      dx = 0;
+      dy = 1;
+    }
+
+    if (direction === "left" && dx !== 1) {
+      dx = -1;
+      dy = 0;
+    }
+
+    if (direction === "right" && dx !== -1) {
+      dx = 1;
+      dy = 0;
+    }
+  }
+
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "ArrowUp") {
+      changeDirection("up");
+    }
+
+    if (event.key === "ArrowDown") {
+      changeDirection("down");
+    }
+
+    if (event.key === "ArrowLeft") {
+      changeDirection("left");
+    }
+
+    if (event.key === "ArrowRight") {
+      changeDirection("right");
+    }
+  });
+
+  function endGame() {
+    clearInterval(timer);
+
+    if (score > best) {
+      best = score;
+      localStorage.setItem("snakeBest", best);
+      document.getElementById("best").textContent = best;
+    }
+
+    alert("游戏结束！你的分数是：" + score);
+  }
+
+  startGame();
+</script>
+
+</body>
+</html>
