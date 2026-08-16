@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>员工登录 | zaizaifadacai</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .box {
+      width: 420px;
+      max-width: 100%;
+      background: rgba(255,255,255,0.95);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    p {
+      text-align: center;
+      color: #666;
+    }
+
+    #loading {
+      text-align: center;
+      padding: 20px;
+    }
+
+    #clerk-sign-in {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+
+    <h1>🕒 员工打卡系统</h1>
+
+    <p>
+      注册或登录后进入个人打卡页面
+    </p>
+
+    <div id="loading">
+      正在加载登录系统...
+    </div>
+
+    <div id="clerk-sign-in"></div>
+
+  </div>
+
+
+<script type="module">
+
+  const publishableKey =
+    "pk_live_Y2xlcmsudGFudGFuY2hlbWFsZXMtc3lzLmdpdGh1Yi5pbyQ";
+
+
+  if (
+    !publishableKey ||
+    publishableKey === "YOUR_PK_LIVE_KEY_HERE"
+  ) {
+    document.getElementById("loading").innerHTML =
+      "请先填写 Clerk Publishable Key";
+    throw new Error("Missing Clerk Publishable Key");
+  }
+
+
+  /*
+    从 pk_live_... 中获取 Clerk Frontend API 域名
+  */
+  const clerkDomain =
+    atob(
+      publishableKey.split("_")[2]
+    ).slice(0, -1);
+
+
+  /*
+    动态加载 ClerkJS
+  */
+  await new Promise(
+    (resolve, reject) => {
+
+      const script =
+        document.createElement("script");
+
+      script.async = true;
+
+      script.crossOrigin =
+        "anonymous";
+
+      script.setAttribute(
+        "data-clerk-publishable-key",
+        publishableKey
+      );
+
+      script.src =
+        `https://${clerkDomain}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+
+      script.onload = resolve;
+      script.onerror = reject;
+
+      document.head.appendChild(script);
+
+    }
+  );
+
+
+  await window.Clerk.load();
+
+
+  document.getElementById(
+    "loading"
+  ).style.display = "none";
+
+
+  /*
+    如果已经登录，直接进入打卡页面
+  */
+  if (window.Clerk.user) {
+
+    window.location.href =
+      "clock.html";
+
+  } else {
+
+    const signInDiv =
+      document.getElementById(
+        "clerk-sign-in"
+      );
+
+
+    window.Clerk.mountSignIn(
+      signInDiv,
+      {
+        signUpUrl:
+          window.location.href,
+
+        forceRedirectUrl:
+          "./clock.html",
+
+        signUpForceRedirectUrl:
+          "./clock.html"
+      }
+    );
+
+  }
+
+</script>
+
+</body>
+</html>
