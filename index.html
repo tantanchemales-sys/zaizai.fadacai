@@ -5,75 +5,637 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>我的第一个网站 | zaizaifadacai</title>
+  <title>zaizaifadacai - 游戏与项目主页</title>
+
+  <meta name="description"
+        content="zaizaifadacai 的个人网站，这里有网页项目和可以直接玩的小游戏。">
+
+  <meta name="robots" content="index, follow">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: auto;
+
+      background-image:
+        linear-gradient(
+          rgba(0, 0, 0, 0.35),
+          rgba(0, 0, 0, 0.35)
+        ),
+        url("kraken.png");
+
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+
+      min-height: 100vh;
+      color: white;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 15px 30px;
+
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(10px);
+    }
+
+    nav .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .hero {
+      min-height: 85vh;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
       padding: 40px 20px;
-      line-height: 1.7;
-      background: #f5f7fa;
     }
 
-    .project {
-      background: white;
+    .hero-box {
+      background: rgba(255, 255, 255, 0.82);
+      color: #222;
+
       padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border-radius: 24px;
+
+      max-width: 700px;
+      width: 90%;
+
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
     }
 
-    h1 {
+    .hero h1 {
+      margin-top: 0;
+      font-size: 46px;
       color: #2c7be5;
     }
 
-    .back {
+    .hero p {
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .main-button {
       display: inline-block;
-      margin-top: 30px;
-      padding: 10px 20px;
+      margin-top: 15px;
+
+      padding: 14px 25px;
+
+      border: none;
+      border-radius: 12px;
+
       background: #2c7be5;
       color: white;
+
       text-decoration: none;
-      border-radius: 8px;
+      font-size: 16px;
+
+      cursor: pointer;
+    }
+
+    .main-button:hover {
+      transform: scale(1.05);
+    }
+
+    section {
+      max-width: 1000px;
+      margin: 0 auto 80px;
+      padding: 20px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 34px;
+      margin-bottom: 30px;
+    }
+
+    .cards {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(250px, 1fr));
+
+      gap: 25px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      color: #222;
+
+      padding: 25px;
+      border-radius: 20px;
+
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+
+      transition: 0.25s;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+    }
+
+    .card h3 {
+      color: #2c7be5;
+    }
+
+    /* 游戏区域 */
+    .game-wrapper {
+      background: rgba(255, 255, 255, 0.92);
+      color: #222;
+
+      padding: 30px;
+      border-radius: 24px;
+
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 15px;
+
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #gameArea {
+      position: relative;
+
+      width: 100%;
+      height: 430px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #dff3ff,
+          #f7e9ff
+        );
+
+      border: 3px solid #2c7be5;
+      border-radius: 20px;
+
+      overflow: hidden;
+    }
+
+    #target {
+      position: absolute;
+
+      width: 65px;
+      height: 65px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle at 30% 30%,
+          #ffffff,
+          #2c7be5
+        );
+
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25);
+
+      cursor: pointer;
+
+      display: none;
+
+      user-select: none;
+    }
+
+    #target:hover {
+      transform: scale(1.08);
+    }
+
+    .game-controls {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      nav a {
+        margin: 0 8px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .hero-box {
+        padding: 25px;
+      }
+
+      #gameArea {
+        height: 350px;
+      }
+
+      #target {
+        width: 55px;
+        height: 55px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="project">
+  <nav>
+    <div class="logo">zaizaifadacai</div>
 
-    <h1>🌐 我的第一个网站</h1>
+    <div>
+      <a href="#home">首页</a>
+      <a href="#projects">项目</a>
+      <a href="#game">小游戏</a>
+    </div>
+  </nav>
 
-    <p>
-      这是我制作的第一个网页项目。
-    </p>
 
-    <h2>项目介绍</h2>
+  <section class="hero" id="home">
 
-    <p>
-      我使用 HTML 和 CSS 制作了这个网站，
-      并通过 GitHub Pages 发布到互联网。
-    </p>
+    <div class="hero-box">
 
-    <h2>使用技术</h2>
+      <h1>zaizaifadacai</h1>
 
-    <p>
-      HTML / CSS / GitHub Pages
-    </p>
+      <h2>祝你今天开心，加油 ✨</h2>
 
-    <h2>项目目标</h2>
+      <p>
+        欢迎来到我的个人网站。
+        这里会慢慢加入我的网页项目、
+        小工具和小游戏。
+      </p>
 
-    <p>
-      学习如何制作网页，并让所有人都可以通过互联网访问。
-    </p>
+      <a class="main-button" href="#game">
+        开始玩游戏
+      </a>
 
-    <a class="back" href="../index.html">
-      ← 返回项目主页
-    </a>
+    </div>
 
-  </div>
+  </section>
+
+
+  <section id="projects">
+
+    <h2 class="section-title">
+      我的项目
+    </h2>
+
+    <div class="cards">
+
+      <div class="card">
+
+        <h3>🌐 我的第一个网站</h3>
+
+        <p>
+          使用 HTML、CSS 和 GitHub Pages
+          制作并发布的个人网站。
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>🎮 网页小游戏</h3>
+
+        <p>
+          使用 JavaScript 制作，
+          不需要安装任何软件，
+          打开网页就可以直接玩。
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>🚀 未来项目</h3>
+
+        <p>
+          以后可以继续添加 AI、
+          数据分析、机器人、
+          Python 等项目。
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section id="game">
+
+    <h2 class="section-title">
+      🎮 点击挑战
+    </h2>
+
+    <div class="game-wrapper">
+
+      <p>
+        游戏规则：
+        点击蓝色圆球得 1 分，
+        每次点击后它会随机移动。
+        30 秒内看看你能拿多少分。
+      </p>
+
+      <div class="game-info">
+
+        <div>
+          分数：
+          <span id="score">
+            0
+          </span>
+        </div>
+
+        <div>
+          剩余时间：
+          <span id="time">
+            30
+          </span>
+          秒
+        </div>
+
+        <div>
+          最高分：
+          <span id="bestScore">
+            0
+          </span>
+        </div>
+
+      </div>
+
+      <div id="gameArea">
+
+        <div
+          id="target"
+          title="点我！">
+        </div>
+
+      </div>
+
+      <div class="game-controls">
+
+        <button
+          class="main-button"
+          onclick="startGame()">
+
+          开始游戏
+
+        </button>
+
+      </div>
+
+      <div
+        class="status"
+        id="status">
+
+        点击“开始游戏”准备挑战！
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <footer>
+
+    © 2026 zaizaifadacai
+    · 我的个人项目网站
+
+  </footer>
+
+
+  <script>
+
+    let score = 0;
+    let timeLeft = 30;
+    let timer = null;
+    let gameRunning = false;
+
+    const target =
+      document.getElementById("target");
+
+    const gameArea =
+      document.getElementById("gameArea");
+
+    const scoreText =
+      document.getElementById("score");
+
+    const timeText =
+      document.getElementById("time");
+
+    const statusText =
+      document.getElementById("status");
+
+    const bestScoreText =
+      document.getElementById("bestScore");
+
+
+    let bestScore =
+      Number(
+        localStorage.getItem("bestScore")
+      ) || 0;
+
+
+    bestScoreText.textContent =
+      bestScore;
+
+
+    function moveTarget() {
+
+      const maxX =
+        gameArea.clientWidth
+        - target.offsetWidth;
+
+      const maxY =
+        gameArea.clientHeight
+        - target.offsetHeight;
+
+
+      const x =
+        Math.random() * maxX;
+
+      const y =
+        Math.random() * maxY;
+
+
+      target.style.left =
+        x + "px";
+
+      target.style.top =
+        y + "px";
+
+    }
+
+
+    function startGame() {
+
+      clearInterval(timer);
+
+      score = 0;
+      timeLeft = 30;
+      gameRunning = true;
+
+      scoreText.textContent =
+        score;
+
+      timeText.textContent =
+        timeLeft;
+
+      statusText.textContent =
+        "游戏开始！快点圆球！";
+
+      target.style.display =
+        "block";
+
+      moveTarget();
+
+
+      timer =
+        setInterval(function () {
+
+          timeLeft--;
+
+          timeText.textContent =
+            timeLeft;
+
+
+          if (timeLeft <= 0) {
+
+            endGame();
+
+          }
+
+        }, 1000);
+
+    }
+
+
+    function endGame() {
+
+      clearInterval(timer);
+
+      gameRunning = false;
+
+      target.style.display =
+        "none";
+
+
+      if (score > bestScore) {
+
+        bestScore = score;
+
+        localStorage.setItem(
+          "bestScore",
+          bestScore
+        );
+
+        bestScoreText.textContent =
+          bestScore;
+
+        statusText.textContent =
+          "🎉 新纪录！你获得了 "
+          + score
+          + " 分！";
+
+      } else {
+
+        statusText.textContent =
+          "游戏结束！你获得了 "
+          + score
+          + " 分。";
+
+      }
+
+    }
+
+
+    target.addEventListener(
+      "click",
+      function () {
+
+        if (!gameRunning) {
+          return;
+        }
+
+        score++;
+
+        scoreText.textContent =
+          score;
+
+        moveTarget();
+
+      }
+    );
+
+
+    window.addEventListener(
+      "resize",
+      function () {
+
+        if (gameRunning) {
+          moveTarget();
+        }
+
+      }
+    );
+
+  </script>
 
 </body>
+
 </html>
