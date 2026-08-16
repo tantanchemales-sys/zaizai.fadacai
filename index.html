@@ -1,64 +1,79 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
-  <title>我的第一个网站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>我的第一个网站 | zaizaifadacai</title>
+
   <style>
     body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 80px;
-
-  background-image: url("kraken.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 100vh;
-}
-
-  h1 {
-  color: #2c7be5;
-}
-
-    p {
-      font-size: 18px;
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
+      line-height: 1.7;
+      background: #f5f7fa;
     }
 
-    button {
+    .project {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      color: #2c7be5;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 30px;
       padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
+      background: #2c7be5;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
     }
-  </style><style>
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.content {
-  background: rgba(255, 255, 255, 0.75);
-  width: 400px;
-  margin: 100px auto;
-  padding: 30px;
-  border-radius: 20px;
-}
-
-</style>
+  </style>
 </head>
 
 <body>
-  <h1>祝你今天开心，加油</h1>
-  <p>嘻嘻嘻。</p>
 
-<br><br>
+  <div class="project">
 
-<button
-  onclick="alert('你好！')"
-  style="padding:12px 24px; font-size:16px; border-radius:10px; cursor:pointer;">
-  好好的生活
-</button>
+    <h1>🌐 我的第一个网站</h1>
+
+    <p>
+      这是我制作的第一个网页项目。
+    </p>
+
+    <h2>项目介绍</h2>
+
+    <p>
+      我使用 HTML 和 CSS 制作了这个网站，
+      并通过 GitHub Pages 发布到互联网。
+    </p>
+
+    <h2>使用技术</h2>
+
+    <p>
+      HTML / CSS / GitHub Pages
+    </p>
+
+    <h2>项目目标</h2>
+
+    <p>
+      学习如何制作网页，并让所有人都可以通过互联网访问。
+    </p>
+
+    <a class="back" href="../index.html">
+      ← 返回项目主页
+    </a>
+
+  </div>
 
 </body>
 </html>
