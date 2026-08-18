@@ -232,7 +232,11 @@ window.addEventListener(
        * 初始化
        */
 
-      await window.Clerk.load();
+     await window.Clerk.load({
+  ui: {
+    ClerkUI: window.__internal_ClerkUICtor
+  }
+});
 
 
       console.log(
