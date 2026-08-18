@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -12,25 +13,23 @@
   <title>员工打卡系统</title>
 
 
-<script
-  defer
-  crossorigin="anonymous"
-  src="https://modern-bass-6049.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
-  type="text/javascript">
-</script>
-
-<script
-  defer
-  crossorigin="anonymous"
-  data-clerk-publishable-key="pk_test_bW9kZXJuLWJhc3MtNjA0OS5jbGVyay5hY2NvdW50cy5kZXYk"
-  src="https://modern-bass-6049.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
-  type="text/javascript">
-</script>
- 
+  <!-- Clerk UI -->
+  <script
+    defer
+    crossorigin="anonymous"
+    src="https://modern-bass-6049.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
+    type="text/javascript">
   </script>
 
-  -->
 
+  <!-- Clerk JS -->
+  <script
+    defer
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bW9kZXJuLWJhc3MtNjA0OS5jbGVyay5hY2NvdW50cy5kZXYk"
+    src="https://modern-bass-6049.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
+    type="text/javascript">
+  </script>
 
 
   <style>
@@ -39,16 +38,10 @@
       box-sizing: border-box;
     }
 
-
     body {
-
       margin: 0;
-
       min-height: 100vh;
-
-      font-family:
-        Arial,
-        sans-serif;
+      font-family: Arial, sans-serif;
 
       background:
         linear-gradient(
@@ -58,22 +51,15 @@
         );
 
       display: flex;
-
       justify-content: center;
-
       align-items: center;
 
       padding: 20px;
-
     }
 
-
     .box {
-
       width: 520px;
-
       max-width: 100%;
-
       background: white;
 
       border-radius: 24px;
@@ -83,164 +69,97 @@
       box-shadow:
         0 20px 60px
         rgba(0,0,0,.3);
-
     }
-
 
     h1 {
-
       text-align: center;
-
       margin-top: 0;
-
       margin-bottom: 10px;
-
     }
-
 
     .subtitle {
-
       text-align: center;
-
       color: #666;
-
       margin-bottom: 30px;
-
     }
-
 
     #loading {
-
       text-align: center;
-
       color: #666;
-
       padding: 20px;
-
     }
-
 
     #error {
-
       display: none;
-
       background: #fee2e2;
-
       color: #dc2626;
-
       padding: 12px;
-
       margin-bottom: 20px;
-
       border-radius: 10px;
-
     }
-
 
     #content {
-
       display: none;
-
     }
-
 
     .user {
-
       background: #f3f4f6;
-
       padding: 15px;
-
       border-radius: 12px;
-
       margin-bottom: 20px;
-
     }
-
 
     .buttons {
-
       display: flex;
-
       gap: 10px;
-
       flex-wrap: wrap;
-
     }
-
 
     button {
-
       flex: 1;
-
       min-width: 130px;
-
       border: none;
-
       border-radius: 10px;
-
       padding: 14px;
-
       font-size: 16px;
-
       cursor: pointer;
-
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
     #clockIn {
-
       background: #22c55e;
-
       color: white;
-
     }
-
 
     #clockOut {
-
       background: #2563eb;
-
       color: white;
-
     }
-
 
     #logout {
-
       background: #ef4444;
-
       color: white;
-
       margin-top: 10px;
-
       width: 100%;
-
     }
-
 
     #message {
-
       margin-top: 20px;
-
       padding: 15px;
-
       border-radius: 10px;
-
       background: #f3f4f6;
-
       display: none;
-
+      line-height: 1.8;
     }
 
-
     .time {
-
       margin-top: 20px;
-
       color: #555;
-
       text-align: center;
-
     }
 
   </style>
@@ -253,30 +172,22 @@
 
 <div class="box">
 
-
   <h1>
     🕒 员工打卡系统
   </h1>
-
 
   <div class="subtitle">
     员工个人打卡页面
   </div>
 
-
   <div id="error"></div>
 
-
   <div id="loading">
-
     正在检查登录状态...
-
   </div>
 
 
-
   <div id="content">
-
 
     <div class="user">
 
@@ -294,55 +205,53 @@
     </div>
 
 
-
     <div class="buttons">
-
 
       <button id="clockIn">
         🟢 上班打卡
       </button>
 
-
       <button id="clockOut">
         🔵 下班打卡
       </button>
 
-
     </div>
 
 
-
     <div id="message"></div>
-
 
 
     <div class="time">
 
       当前时间：
 
-      <strong id="currentTime">
-      </strong>
+      <strong id="currentTime"></strong>
 
     </div>
 
 
-
     <button id="logout">
-
       退出登录
-
     </button>
 
-
   </div>
-
 
 </div>
 
 
 
+<script type="module">
 
-<script>
+import { db } from "./firebase-config.js";
+
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
 window.addEventListener(
@@ -369,16 +278,32 @@ window.addEventListener(
       );
 
 
-    try {
+    const message =
+      document.getElementById(
+        "message"
+      );
 
+
+    const clockInButton =
+      document.getElementById(
+        "clockIn"
+      );
+
+
+    const clockOutButton =
+      document.getElementById(
+        "clockOut"
+      );
+
+
+    try {
 
 
       /*
        =========================
-       检查 Clerk 有没有加载
+       检查 Clerk
        =========================
       */
-
 
       if (!window.Clerk) {
 
@@ -389,13 +314,11 @@ window.addEventListener(
       }
 
 
-
       /*
        =========================
        初始化 Clerk
        =========================
       */
-
 
       await window.Clerk.load({
         ui: {
@@ -405,32 +328,43 @@ window.addEventListener(
       });
 
 
-
       /*
        =========================
-       检查是否登录
+       检查登录状态
        =========================
       */
 
-
       if (!window.Clerk.user) {
-
 
         window.location.href =
           "./index.html";
-
 
         return;
 
       }
 
 
-
       /*
        =========================
-       登录成功
+       当前登录用户
        =========================
       */
+
+      const user =
+        window.Clerk.user;
+
+
+      const email =
+        user.primaryEmailAddress
+          ?.emailAddress
+        ||
+        "没有邮箱";
+
+
+      document.getElementById(
+        "email"
+      ).textContent =
+        email;
 
 
       loading.style.display =
@@ -441,46 +375,13 @@ window.addEventListener(
         "block";
 
 
-
-      const user =
-        window.Clerk.user;
-
-
-
-      /*
-       =========================
-       显示邮箱
-       =========================
-      */
-
-
-      const email =
-
-        user.primaryEmailAddress
-          ?.emailAddress
-
-        ||
-
-        "没有邮箱";
-
-
-
-      document.getElementById(
-        "email"
-      ).textContent =
-        email;
-
-
-
       /*
        =========================
        当前时间
        =========================
       */
 
-
       function updateTime() {
-
 
         const now =
           new Date();
@@ -497,7 +398,6 @@ window.addEventListener(
       }
 
 
-
       updateTime();
 
 
@@ -507,37 +407,226 @@ window.addEventListener(
       );
 
 
-
       /*
        =========================
-       上班打卡
+       获取今天日期
        =========================
       */
 
+      function getToday() {
 
-      document.getElementById(
-        "clockIn"
-      ).addEventListener(
+        return new Date()
+          .toLocaleDateString(
+            "zh-CN"
+          );
 
-        "click",
+      }
 
-        () => {
+
+      /*
+       =========================
+       读取今天打卡记录
+       =========================
+      */
+
+      async function loadTodayRecords() {
+
+
+        const today =
+          getToday();
+
+
+        const q =
+          query(
+
+            collection(
+              db,
+              "clockRecords"
+            ),
+
+            where(
+              "clerkUserId",
+              "==",
+              user.id
+            ),
+
+            where(
+              "date",
+              "==",
+              today
+            )
+
+          );
+
+
+        const snapshot =
+          await getDocs(q);
+
+
+        if (
+          snapshot.empty
+        ) {
+
+          message.style.display =
+            "none";
+
+          return;
+
+        }
+
+
+        const records =
+          [];
+
+
+        snapshot.forEach(
+          (documentSnapshot) => {
+
+
+            const data =
+              documentSnapshot.data();
+
+
+            records.push(
+              data
+            );
+
+          }
+        );
+
+
+        records.sort(
+          (a, b) => {
+
+            const aTime =
+              a.clientTimestamp || 0;
+
+            const bTime =
+              b.clientTimestamp || 0;
+
+            return (
+              aTime - bTime
+            );
+
+          }
+        );
+
+
+        let html =
+
+          "<strong>今天的打卡记录：</strong><br><br>";
+
+
+        records.forEach(
+          (data) => {
+
+
+            const label =
+
+              data.type ===
+              "clock-in"
+
+                ? "🟢 上班"
+
+                : "🔵 下班";
+
+
+            html +=
+
+              label +
+              "：" +
+              data.localTime +
+              "<br>";
+
+          }
+        );
+
+
+        message.style.display =
+          "block";
+
+
+        message.innerHTML =
+          html;
+
+      }
+
+
+      /*
+       =========================
+       保存打卡记录
+       =========================
+      */
+
+      async function saveClock(
+        type
+      ) {
+
+
+        const button =
+
+          type ===
+          "clock-in"
+
+            ? clockInButton
+
+            : clockOutButton;
+
+
+        try {
+
+
+          button.disabled =
+            true;
+
+
+          message.style.display =
+            "block";
+
+
+          message.textContent =
+            "正在保存打卡记录...";
 
 
           const now =
             new Date();
 
 
-          const time =
-            now.toLocaleString(
-              "zh-CN"
-            );
+          await addDoc(
 
+            collection(
+              db,
+              "clockRecords"
+            ),
 
-          const message =
-            document.getElementById(
-              "message"
-            );
+            {
+
+              clerkUserId:
+                user.id,
+
+              email:
+                email,
+
+              type:
+                type,
+
+              localTime:
+                now.toLocaleString(
+                  "zh-CN"
+                ),
+
+              date:
+                getToday(),
+
+              clientTimestamp:
+                now.getTime(),
+
+              createdAt:
+                serverTimestamp()
+
+            }
+
+          );
 
 
           message.style.display =
@@ -546,26 +635,72 @@ window.addEventListener(
 
           message.innerHTML =
 
-            "✅ 上班打卡成功！<br><br>" +
+            type ===
+            "clock-in"
 
-            "时间：" +
-            time;
+              ? "✅ 上班打卡成功！"
+
+              : "✅ 下班打卡成功！";
 
 
-          /*
-            注意：
+          await loadTodayRecords();
 
-            现在只是显示打卡成功。
 
-            下一步我们会把这个时间
-            真正保存到 Firebase。
-          */
+        }
+
+        catch (error) {
+
+
+          console.error(
+            error
+          );
+
+
+          message.style.display =
+            "block";
+
+
+          message.textContent =
+
+            "❌ 打卡失败：" +
+            error.message;
+
+
+        }
+
+        finally {
+
+
+          button.disabled =
+            false;
+
+
+        }
+
+      }
+
+
+      /*
+       =========================
+       上班打卡
+       =========================
+      */
+
+      clockInButton.addEventListener(
+
+        "click",
+
+        async () => {
+
+
+          await saveClock(
+            "clock-in"
+          );
 
 
         }
 
       );
-
 
 
       /*
@@ -574,42 +709,16 @@ window.addEventListener(
        =========================
       */
 
-
-      document.getElementById(
-        "clockOut"
-      ).addEventListener(
+      clockOutButton.addEventListener(
 
         "click",
 
-        () => {
+        async () => {
 
 
-          const now =
-            new Date();
-
-
-          const time =
-            now.toLocaleString(
-              "zh-CN"
-            );
-
-
-          const message =
-            document.getElementById(
-              "message"
-            );
-
-
-          message.style.display =
-            "block";
-
-
-          message.innerHTML =
-
-            "✅ 下班打卡成功！<br><br>" +
-
-            "时间：" +
-            time;
+          await saveClock(
+            "clock-out"
+          );
 
 
         }
@@ -617,13 +726,11 @@ window.addEventListener(
       );
 
 
-
       /*
        =========================
        退出登录
        =========================
       */
-
 
       document.getElementById(
         "logout"
@@ -646,8 +753,16 @@ window.addEventListener(
       );
 
 
-    }
+      /*
+       =========================
+       页面打开时读取记录
+       =========================
+      */
 
+      await loadTodayRecords();
+
+
+    }
 
 
     catch (error) {
@@ -679,10 +794,10 @@ window.addEventListener(
 
 );
 
-
 </script>
 
 
 </body>
 
 </html>
+```
