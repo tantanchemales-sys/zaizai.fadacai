@@ -1,31 +1,147 @@
 <!DOCTYPE html>
-
 <html lang="zh-CN">
 
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>员工打卡</title>
 
-</head>
+  <!-- 这里粘贴 Clerk Development API Keys 页面给你的两段 script -->
 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      padding: 40px;
+    }
+
+    .box {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
 
 <body>
 
-  <h1>
-    ✅ 登录成功
-  </h1>
+<div class="box">
 
-  <p>
-    这里之后做员工打卡页面。
-  </p>
+  <h1>🕒 员工打卡系统</h1>
+
+  <p id="loading">正在检查登录状态...</p>
+
+  <div id="content" style="display:none;">
+
+    <h2>欢迎回来</h2>
+
+    <p>
+      登录邮箱：
+      <strong id="email"></strong>
+    </p>
+
+    <button id="clockIn">
+      上班打卡
+    </button>
+
+    <button id="clockOut">
+      下班打卡
+    </button>
+
+    <button id="logout">
+      退出登录
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+window.addEventListener("load", async () => {
+
+  await window.Clerk.load({
+    ui: {
+      ClerkUI: window.__internal_ClerkUICtor
+    }
+  });
+
+  // 没有登录
+  if (!window.Clerk.user) {
+
+    window.location.href = "./index.html";
+
+    return;
+  }
+
+  // 已经登录
+  document.getElementById("loading").style.display = "none";
+
+  document.getElementById("content").style.display = "block";
+
+  const user = window.Clerk.user;
+
+  document.getElementById("email").textContent =
+    user.primaryEmailAddress?.emailAddress || "没有邮箱";
+
+
+  // 退出登录
+  document.getElementById("logout").addEventListener(
+    "click",
+    async () => {
+
+      await window.Clerk.signOut();
+
+      window.location.href = "./index.html";
+
+    }
+  );
+
+
+  // 上班打卡
+  document.getElementById("clockIn").addEventListener(
+    "click",
+    () => {
+
+      const now = new Date();
+
+      alert(
+        "上班打卡成功！\n" +
+        now.toLocaleString()
+      );
+
+    }
+  );
+
+
+  // 下班打卡
+  document.getElementById("clockOut").addEventListener(
+    "click",
+    () => {
+
+      const now = new Date();
+
+      alert(
+        "下班打卡成功！\n" +
+        now.toLocaleString()
+      );
+
+    }
+  );
+
+});
+
+</script>
 
 </body>
-
 </html>
