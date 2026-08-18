@@ -1,21 +1,27 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore }
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
 const firebaseConfig = {
-  apiKey: "你的 apiKey",
-  authDomain: "你的项目.firebaseapp.com",
-  projectId: "你的 projectId",
-  storageBucket: "你的 storageBucket",
-  messagingSenderId: "你的 messagingSenderId",
-  appId: "你的 appId"
+  apiKey: "AIzaSyDBFm66qJgExN4E_URHbDGhiTrzOhp_Mok",
+  authDomain: "employee-clock-system-bc798.firebaseapp.com",
+  projectId: "employee-clock-system-bc798",
+  storageBucket: "employee-clock-system-bc798.firebasestorage.app",
+  messagingSenderId: "276476267207",
+  appId: "1:276476267207:web:50b7fdd375b33f57774ce2",
+  measurementId: "G-XEZ8WGXXMJ"
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+  initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+
+const db =
+  getFirestore(app);
 
 
-export { auth };
+export { db };
