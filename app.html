@@ -3,11 +3,16 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>员工打卡</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <script
+  <title>员工打卡系统</title>
+
+
+<script
   defer
   crossorigin="anonymous"
   src="https://modern-bass-6049.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"
@@ -21,140 +26,663 @@
   src="https://modern-bass-6049.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
   type="text/javascript">
 </script>
+ 
+  </script>
+
+  -->
+
+
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      padding: 40px;
+
+    * {
+      box-sizing: border-box;
     }
+
+
+    body {
+
+      margin: 0;
+
+      min-height: 100vh;
+
+      font-family:
+        Arial,
+        sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #111827,
+          #2563eb
+        );
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      padding: 20px;
+
+    }
+
 
     .box {
-      max-width: 600px;
-      margin: auto;
+
+      width: 520px;
+
+      max-width: 100%;
+
       background: white;
-      padding: 30px;
-      border-radius: 20px;
+
+      border-radius: 24px;
+
+      padding: 35px;
+
+      box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.3);
+
     }
 
-    button {
-      padding: 12px 20px;
-      margin: 10px;
-      cursor: pointer;
+
+    h1 {
+
+      text-align: center;
+
+      margin-top: 0;
+
+      margin-bottom: 10px;
+
     }
+
+
+    .subtitle {
+
+      text-align: center;
+
+      color: #666;
+
+      margin-bottom: 30px;
+
+    }
+
+
+    #loading {
+
+      text-align: center;
+
+      color: #666;
+
+      padding: 20px;
+
+    }
+
+
+    #error {
+
+      display: none;
+
+      background: #fee2e2;
+
+      color: #dc2626;
+
+      padding: 12px;
+
+      margin-bottom: 20px;
+
+      border-radius: 10px;
+
+    }
+
+
+    #content {
+
+      display: none;
+
+    }
+
+
+    .user {
+
+      background: #f3f4f6;
+
+      padding: 15px;
+
+      border-radius: 12px;
+
+      margin-bottom: 20px;
+
+    }
+
+
+    .buttons {
+
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+    button {
+
+      flex: 1;
+
+      min-width: 130px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      padding: 14px;
+
+      font-size: 16px;
+
+      cursor: pointer;
+
+    }
+
+
+    #clockIn {
+
+      background: #22c55e;
+
+      color: white;
+
+    }
+
+
+    #clockOut {
+
+      background: #2563eb;
+
+      color: white;
+
+    }
+
+
+    #logout {
+
+      background: #ef4444;
+
+      color: white;
+
+      margin-top: 10px;
+
+      width: 100%;
+
+    }
+
+
+    #message {
+
+      margin-top: 20px;
+
+      padding: 15px;
+
+      border-radius: 10px;
+
+      background: #f3f4f6;
+
+      display: none;
+
+    }
+
+
+    .time {
+
+      margin-top: 20px;
+
+      color: #555;
+
+      text-align: center;
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
+
 <div class="box">
 
-  <h1>🕒 员工打卡系统</h1>
 
-  <p id="loading">正在检查登录状态...</p>
+  <h1>
+    🕒 员工打卡系统
+  </h1>
 
-  <div id="content" style="display:none;">
 
-    <h2>欢迎回来</h2>
+  <div class="subtitle">
+    员工个人打卡页面
+  </div>
 
-    <p>
-      登录邮箱：
-      <strong id="email"></strong>
-    </p>
 
-    <button id="clockIn">
-      上班打卡
-    </button>
+  <div id="error"></div>
 
-    <button id="clockOut">
-      下班打卡
-    </button>
 
-    <button id="logout">
-      退出登录
-    </button>
+  <div id="loading">
+
+    正在检查登录状态...
 
   </div>
+
+
+
+  <div id="content">
+
+
+    <div class="user">
+
+      <strong>
+        当前登录员工
+      </strong>
+
+      <p>
+        邮箱：
+        <span id="email">
+          加载中...
+        </span>
+      </p>
+
+    </div>
+
+
+
+    <div class="buttons">
+
+
+      <button id="clockIn">
+        🟢 上班打卡
+      </button>
+
+
+      <button id="clockOut">
+        🔵 下班打卡
+      </button>
+
+
+    </div>
+
+
+
+    <div id="message"></div>
+
+
+
+    <div class="time">
+
+      当前时间：
+
+      <strong id="currentTime">
+      </strong>
+
+    </div>
+
+
+
+    <button id="logout">
+
+      退出登录
+
+    </button>
+
+
+  </div>
+
 
 </div>
 
 
+
+
 <script>
 
-window.addEventListener("load", async () => {
 
-  await window.Clerk.load({
-    ui: {
-      ClerkUI: window.__internal_ClerkUICtor
+window.addEventListener(
+  "load",
+
+  async () => {
+
+
+    const loading =
+      document.getElementById(
+        "loading"
+      );
+
+
+    const content =
+      document.getElementById(
+        "content"
+      );
+
+
+    const errorBox =
+      document.getElementById(
+        "error"
+      );
+
+
+    try {
+
+
+
+      /*
+       =========================
+       检查 Clerk 有没有加载
+       =========================
+      */
+
+
+      if (!window.Clerk) {
+
+        throw new Error(
+          "Clerk 没有成功加载"
+        );
+
+      }
+
+
+
+      /*
+       =========================
+       初始化 Clerk
+       =========================
+      */
+
+
+      await window.Clerk.load({
+        ui: {
+          ClerkUI:
+            window.__internal_ClerkUICtor
+        }
+      });
+
+
+
+      /*
+       =========================
+       检查是否登录
+       =========================
+      */
+
+
+      if (!window.Clerk.user) {
+
+
+        window.location.href =
+          "./index.html";
+
+
+        return;
+
+      }
+
+
+
+      /*
+       =========================
+       登录成功
+       =========================
+      */
+
+
+      loading.style.display =
+        "none";
+
+
+      content.style.display =
+        "block";
+
+
+
+      const user =
+        window.Clerk.user;
+
+
+
+      /*
+       =========================
+       显示邮箱
+       =========================
+      */
+
+
+      const email =
+
+        user.primaryEmailAddress
+          ?.emailAddress
+
+        ||
+
+        "没有邮箱";
+
+
+
+      document.getElementById(
+        "email"
+      ).textContent =
+        email;
+
+
+
+      /*
+       =========================
+       当前时间
+       =========================
+      */
+
+
+      function updateTime() {
+
+
+        const now =
+          new Date();
+
+
+        document.getElementById(
+          "currentTime"
+        ).textContent =
+
+          now.toLocaleString(
+            "zh-CN"
+          );
+
+      }
+
+
+
+      updateTime();
+
+
+      setInterval(
+        updateTime,
+        1000
+      );
+
+
+
+      /*
+       =========================
+       上班打卡
+       =========================
+      */
+
+
+      document.getElementById(
+        "clockIn"
+      ).addEventListener(
+
+        "click",
+
+        () => {
+
+
+          const now =
+            new Date();
+
+
+          const time =
+            now.toLocaleString(
+              "zh-CN"
+            );
+
+
+          const message =
+            document.getElementById(
+              "message"
+            );
+
+
+          message.style.display =
+            "block";
+
+
+          message.innerHTML =
+
+            "✅ 上班打卡成功！<br><br>" +
+
+            "时间：" +
+            time;
+
+
+          /*
+            注意：
+
+            现在只是显示打卡成功。
+
+            下一步我们会把这个时间
+            真正保存到 Firebase。
+          */
+
+
+        }
+
+      );
+
+
+
+      /*
+       =========================
+       下班打卡
+       =========================
+      */
+
+
+      document.getElementById(
+        "clockOut"
+      ).addEventListener(
+
+        "click",
+
+        () => {
+
+
+          const now =
+            new Date();
+
+
+          const time =
+            now.toLocaleString(
+              "zh-CN"
+            );
+
+
+          const message =
+            document.getElementById(
+              "message"
+            );
+
+
+          message.style.display =
+            "block";
+
+
+          message.innerHTML =
+
+            "✅ 下班打卡成功！<br><br>" +
+
+            "时间：" +
+            time;
+
+
+        }
+
+      );
+
+
+
+      /*
+       =========================
+       退出登录
+       =========================
+      */
+
+
+      document.getElementById(
+        "logout"
+      ).addEventListener(
+
+        "click",
+
+        async () => {
+
+
+          await window.Clerk.signOut();
+
+
+          window.location.href =
+            "./index.html";
+
+
+        }
+
+      );
+
+
     }
-  });
 
-  // 没有登录
-  if (!window.Clerk.user) {
 
-    window.location.href = "./index.html";
 
-    return;
+    catch (error) {
+
+
+      console.error(
+        error
+      );
+
+
+      loading.style.display =
+        "none";
+
+
+      errorBox.style.display =
+        "block";
+
+
+      errorBox.textContent =
+
+        "页面加载失败：" +
+        error.message;
+
+
+    }
+
+
   }
 
-  // 已经登录
-  document.getElementById("loading").style.display = "none";
+);
 
-  document.getElementById("content").style.display = "block";
-
-  const user = window.Clerk.user;
-
-  document.getElementById("email").textContent =
-    user.primaryEmailAddress?.emailAddress || "没有邮箱";
-
-
-  // 退出登录
-  document.getElementById("logout").addEventListener(
-    "click",
-    async () => {
-
-      await window.Clerk.signOut();
-
-      window.location.href = "./index.html";
-
-    }
-  );
-
-
-  // 上班打卡
-  document.getElementById("clockIn").addEventListener(
-    "click",
-    () => {
-
-      const now = new Date();
-
-      alert(
-        "上班打卡成功！\n" +
-        now.toLocaleString()
-      );
-
-    }
-  );
-
-
-  // 下班打卡
-  document.getElementById("clockOut").addEventListener(
-    "click",
-    () => {
-
-      const now = new Date();
-
-      alert(
-        "下班打卡成功！\n" +
-        now.toLocaleString()
-      );
-
-    }
-  );
-
-});
 
 </script>
 
+
 </body>
+
 </html>
